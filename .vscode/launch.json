@@ -15,7 +15,7 @@
       "name": "Downloader main.py",
       "type": "python",
       "request": "launch",
-      "module": "kvdl.main",
+      "module": "kvcdl.main",
       "console": "integratedTerminal",
       // "args": [
       //   "--config-file",

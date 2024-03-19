@@ -1,7 +1,7 @@
-from kvdl.config import config
-from kvdl.keyvault import Keyvault
-from kvdl.output import Output
-from kvdl.hook import Hook
+from kvcdl.config import config
+from kvcdl.keyvault import Keyvault
+from kvcdl.output import Output
+from kvcdl.hook import Hook
 
 def main():
   vault = Keyvault(list(config['keyvaults'].keys())[0])

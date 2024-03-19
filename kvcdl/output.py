@@ -8,7 +8,7 @@ import xattr
 class Output:
   def __init__(self, dir):
     self._dir = dir
-    self._version_xattr = 'user.kvdl_version'
+    self._version_xattr = 'user.kvcdl_version'
 
   @property
   def _secrets(self):

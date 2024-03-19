@@ -38,3 +38,9 @@ Use Python 3.8:
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
+
+## Publishing
+
+There is a GitHub Actions workflow that will automatically publish a new version of the package to pypi whenever a tag is pushed.
+
+The API token used for publishing is stored as the `PYPI_API_TOKEN` GitHub Actions secret and is also available in [PasswordManager](https://passwordmanager.lrscorp.net/app/#/secret/9154/)
