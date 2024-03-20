@@ -46,29 +46,28 @@ class Output:
     _mode = 'ca'
     if config['output']['ext'] == 'pem':
       for _line in _secret_content.splitlines():
-        match _mode:
-          case 'ca':
-            _ca_cert_content += _line
-            if '-END CERTIFICATE-' in _line:
-              _mode = 'key'
-            else:
-              _ca_cert_content += '\n'
-          case 'key':
-            _key_content += _line
-            if '-END PRIVATE KEY-' in _line:
-              _mode = 'cert'
-            else:
-              _key_content += '\n'
-          case 'cert':
-            _cert_content += _line
-            if '-END CERTIFICATE-' in _line:
-              _mode = 'done'
-            else:
-              _cert_content += '\n'
-          case 'done':
-            break
-          case _:
-            raise ValueError('Invalid mode: {}'.format(_mode))
+        if _mode == 'ca':
+          _ca_cert_content += _line
+          if '-END CERTIFICATE-' in _line:
+            _mode = 'key'
+          else:
+            _ca_cert_content += '\n'
+        elif _mode == 'key':
+          _key_content += _line
+          if '-END PRIVATE KEY-' in _line:
+            _mode = 'cert'
+          else:
+            _key_content += '\n'
+        elif _mode == 'cert':
+          _cert_content += _line
+          if '-END CERTIFICATE-' in _line:
+            _mode = 'done'
+          else:
+            _cert_content += '\n'
+        elif _mode == 'done':
+          break
+        else:
+          raise ValueError('Invalid mode: {}'.format(_mode))
 
     with open(_file_name_base + '-ca.pem', 'w') as f:
       f.write(_ca_cert_content)
