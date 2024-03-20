@@ -24,7 +24,7 @@ class Output:
 
     return __secrets
 
-  def _output_file(self, secret_name, version, value_pkcs12):
+  def _output_files(self, secret_name, version, value_pkcs12):
     _file_name = secret_name + '.' + config['output']['ext']
     _fullpath = path.join(self._dir, _file_name)
     _value_pem = pkcs12_to_pem(value_pkcs12)
@@ -36,6 +36,48 @@ class Output:
         self._version_xattr,
         bytes(version, encoding='utf-8')
       )
+    
+    _file_name_base = Path(_fullpath).stem
+
+    _secret_content = open(_fullpath, 'r').read()
+    _ca_cert_content = ''
+    _cert_content = ''
+    _key_content = ''
+    _mode = 'ca'
+    if config['output']['ext'] == 'pem':
+      for _line in _secret_content.splitlines():
+        match _mode:
+          case 'ca':
+            _ca_cert_content += _line
+            if '-END CERTIFICATE-' in _line:
+              _mode = 'key'
+            else:
+              _ca_cert_content += '\n'
+          case 'key':
+            _key_content += _line
+            if '-END PRIVATE KEY-' in _line:
+              _mode = 'cert'
+            else:
+              _key_content += '\n'
+          case 'cert':
+            _cert_content += _line
+            if '-END CERTIFICATE-' in _line:
+              _mode = 'done'
+            else:
+              _cert_content += '\n'
+          case 'done':
+            break
+          case _:
+            raise ValueError('Invalid mode: {}'.format(_mode))
+
+    with open(_file_name_base + '-ca.pem', 'w') as f:
+      f.write(_ca_cert_content)
+
+    with open(_file_name_base + '-cert.pem', 'w') as f:
+      f.write(_cert_content)
+
+    with open(_file_name_base + '-key.pem', 'w') as f:
+      f.write(_key_content)
 
   @property
   def _secret_names(self):
@@ -50,7 +92,7 @@ class Output:
         if s.properties.version == local_secret.version:
           print('debug: Skipping {}'.format(s.name))
           continue
-      self._output_file(s.name, s.properties.version, s.value)
+      self._output_files(s.name, s.properties.version, s.value)
       _output_secrets.append(s)
       print('debug: Output secret {}'.format(s.name))
 
