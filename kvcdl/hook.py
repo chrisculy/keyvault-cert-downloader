@@ -4,7 +4,7 @@ import dbus
 class Hook:
   def __init__(self, action, service):
     self.action = action
-    self.service = service + '.service'
+    self.service = service
 
   def _action(self):
     if self.action == 'bitnami_restart':
@@ -24,7 +24,7 @@ class Hook:
       else:
         sys.exit('Action must be "reload" or "restart"')
 
-      managerMethod(self.service, 'replace')
+      managerMethod(self.service + '.service', 'replace')
 
   def run(self):
     self._action()
