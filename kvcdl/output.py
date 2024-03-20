@@ -3,6 +3,7 @@ from os.path import isfile, join
 from .config import config
 from .models import LocalSecret
 from .certificate import pkcs12_to_pem
+from pathlib import Path
 import xattr
 
 class Output:
